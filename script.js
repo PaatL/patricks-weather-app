@@ -15,25 +15,20 @@ function getCurrentWeather(data) {
       return res.json();
     })
     .then(function (data) {
-      console.log("current", data);
-      console.log(data.name);
-      console.log(data.main.temp_max);
-      //display current weather, including ws, h, tempmin/max, city name, date, weather icons
-
-      //create elements for above data elements
+      let weatherDiv = document.createElement("div");
       const cityNameEL = document.createElement("h2");
       const currentDateEL = document.createElement("h3");
       const weatherIcon = data["weather"][0]["icon"];
       const weatherIconEL = document.createElement("p");
-      const currentTempEL = document.createElement("li");
-      const windSpeedEL = document.createElement("li");
-      const humidityEL = document.createElement("li");
+      const currentTempEL = document.createElement("ul");
+      const windSpeedEL = document.createElement("ul");
+      const humidityEL = document.createElement("ul");
       //add text content to element, icons as well
       cityNameEL.textContent = data.name;
-      currentDateEL.textContent = data.timezone;
-      currentTempEL.textContent = data.main.temp;
-      windSpeedEL.textContent = data.wind.speed;
-      humidityEL.textContent = data.main.humidity;
+      currentDateEL.textContent = data.dt_txt;
+      currentTempEL.textContent = "Temperature is: " + data.main.temp + " Fahrenheit";
+      windSpeedEL.textContent = "Wind speeds are: " +data.wind.speed + " miles/hour";
+      humidityEL.textContent = "Humidity is: " + data.main.humidity + " %";
       var weatherIconURL =
         "<img class = 'weather-icon' src= 'https://openweathermap.org/img/wn/" +
         weatherIcon +
@@ -42,13 +37,16 @@ function getCurrentWeather(data) {
       console.log(weatherIcon);
       //append to currentWeatherBox
       weatherIconEL.innerHTML = weatherIconURL;
-      currentWeatherBox.append(
+
+      weatherDiv.append(
         cityNameEL,
+        currentDateEL,
         weatherIconEL,
         currentTempEL,
         windSpeedEL,
         humidityEL
       );
+      currentWeatherBox.append(weatherDiv);
     });
 }
 function get5DayForecast(data) {
@@ -75,9 +73,9 @@ function get5DayForecast(data) {
     const currentDateEL = document.createElement("h3");
     const weatherIcon = data.list[i].weather[0].icon;
     const weatherIconEL = document.createElement("p");
-    const currentTempEL = document.createElement("li");
-    const windSpeedEL = document.createElement("li");
-    const humidityEL = document.createElement("li");
+    const currentTempEL = document.createElement("ul");
+    const windSpeedEL = document.createElement("ul");
+    const humidityEL = document.createElement("ul");
 
     var weatherIconURL =
     "<img class = 'weather-icon' src= 'https://openweathermap.org/img/wn/" +
@@ -86,10 +84,9 @@ function get5DayForecast(data) {
 
     weatherIconEL.innerHTML = weatherIconURL;
     currentDateEL.textContent = data.list[i].dt_txt;
-    currentTempEL.textContent = data.list[i].main.temp;
-    windSpeedEL.textContent = data.list[i].wind.speed;
-    humidityEL.textContent = data.list[i].main.humidity;
-
+    currentTempEL.textContent = "Temp: " + data.list[i].main.temp + " F";
+    windSpeedEL.textContent = "Winds: " +data.list[i].wind.speed + " m/h";
+    humidityEL.textContent = "Humidity: " +data.list[i].main.humidity + "%";
 
     forecastDiv.append(currentDateEL,weatherIconEL,currentTempEL,windSpeedEL,humidityEL)
     forecastWeatherBox.append(forecastDiv)
@@ -98,10 +95,19 @@ function get5DayForecast(data) {
   }
 
     });
+
+    
+}
+function clearPreviousSearch(){
+  
+currentWeatherBox.textContent = "";
+forecastWeatherBox.textContent= "";
+
 }
 function start() {
-  getCurrentWeather(userInput.value);
+  clearPreviousSearch();
   get5DayForecast(userInput.value);
+  getCurrentWeather(userInput.value);
   saveSearchToStorage(userInput.value);
 }
 
